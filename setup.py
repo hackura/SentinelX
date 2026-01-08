@@ -10,8 +10,8 @@ setup(
     description="SentinelX - Red/Blue/Purple Team Security Framework",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author="SentinelX Dev",
-    url="https://github.com/yourusername/SentinelX",
+    author="Hackura",
+    url="https://github.com/hackura/SentinelX",
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
