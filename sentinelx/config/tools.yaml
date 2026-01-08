@@ -1,0 +1,42 @@
+blue:
+  grep:
+    default_args: -i
+    description: Log analysis basic tool
+    path: grep
+  sigma:
+    default_args: -t list
+    description: Sigma rule compiler/checker
+    path: sigma
+  yara:
+    default_args: -r
+    description: Pattern matching swiss knife
+    path: yara
+red:
+  amass:
+    default_args: enum -d
+    description: In-depth Attack Surface Mapping
+    path: amass
+  hydra:
+    default_args: -h
+    description: Parallelized login cracker
+    path: hydra
+  msfvenom:
+    default_args: --list payloads
+    description: Metasploit payload generator
+    path: msfvenom
+  nikto:
+    default_args: -h
+    description: Web server scanner
+    path: nikto
+  nmap:
+    default_args: -sV -O
+    description: Network exploration and security auditing
+    path: nmap
+  nuclei:
+    default_args: -t
+    description: Template based vulnerability scanner
+    path: nuclei
+  sqlmap:
+    default_args: --batch --banner
+    description: Automatic SQL injection tool
+    path: sqlmap

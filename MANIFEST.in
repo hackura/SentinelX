@@ -1,0 +1,7 @@
+include README.md
+include LICENSE
+include LEGAL.md
+include requirements.txt
+recursive-include sentinelx/banner *
+recursive-include sentinelx/config *
+recursive-include sentinelx/assets *

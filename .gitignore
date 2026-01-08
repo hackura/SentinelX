@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+
+# Distribution / Packaging
+build/
+dist/
+*.egg-info/
+
+# SentinelX Specific
+logs/*.json
+reports/*.pdf
+reports/*.json
+reports/*.html
+assets/logo.png
+.consent
+
+# System
+.DS_Store

@@ -1,0 +1,18 @@
+SentinelX v2.0 - New Features Usage
+
+1. Run the CLI:
+   $ sentinelX
+
+2. Full-Screen Dashboard:
+   - Select option [5] from the Main Menu.
+
+3. Generate SVG Logo:
+   - Run the generator script:
+   $ python3 -m sentinelx.core.logo_gen
+
+4. Generate Authorized PDF Report:
+   - Run the report generator (requires reportlab):
+   $ python3 -m sentinelx.core.pdf_gen
+
+Note: The sentinelx command works globally if installed via pip:
+   $ pip install .
