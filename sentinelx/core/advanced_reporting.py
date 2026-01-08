@@ -373,11 +373,11 @@ def generate_report(data):
         return
 
     # 2. Prepare Data & Paths
-    os.makedirs("reports", exist_ok=True)
+    os.makedirs(os.path.join(os.path.dirname(os.path.dirname(__file__)), "reports"), exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     report_id = f"SX-{timestamp}"
-    json_path = f"reports/SentinelX_Report_{timestamp}.json"
-    pdf_path = f"reports/SentinelX_Report_{timestamp}.pdf"
+    json_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "reports", f"SentinelX_Report_{timestamp}.json")
+    pdf_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "reports", f"SentinelX_Report_{timestamp}.pdf")
     
     # Enrich Data for Template
     all_modules = data.get("red_modules", []) + data.get("blue_modules", []) + data.get("purple_modules", [])

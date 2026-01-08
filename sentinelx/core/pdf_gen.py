@@ -17,7 +17,7 @@ try:
 except ImportError:
     HAS_REPORTLAB = False
 
-def check_auth_and_generate_pdf(report_data, output_path="reports/SentinelX_Report.pdf"):
+def check_auth_and_generate_pdf(report_data, output_path=os.path.join(os.path.dirname(os.path.dirname(__file__)), "reports", "SentinelX_Report.pdf")):
     if not HAS_REPORTLAB:
         console.print("[bold red]Error: reportlab or svglib is not installed.[/bold red]")
         return
@@ -28,7 +28,7 @@ def check_auth_and_generate_pdf(report_data, output_path="reports/SentinelX_Repo
         return
 
     # Ensure reports dir exists
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    os.makedirs(os.path.join(os.path.dirname(os.path.dirname(__file__)), "reports"), exist_ok=True)
     
     doc = SimpleDocTemplate(output_path, pagesize=letter, topMargin=40)
     styles = getSampleStyleSheet()

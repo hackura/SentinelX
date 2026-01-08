@@ -7,10 +7,11 @@ from rich.console import Console
 console = Console()
 
 def generate_filename(prefix="report"):
-    if not os.path.exists("reports"):
-        os.makedirs("reports")
+    reports_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "reports")
+    if not os.path.exists(reports_dir):
+        os.makedirs(reports_dir)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    return f"reports/{prefix}_{timestamp}"
+    return os.path.join(os.path.dirname(os.path.dirname(__file__)), "reports", f"{prefix}_{timestamp}")
 
 def save_report_md(data, title="SentinelX Security Report"):
     filename = generate_filename() + ".md"
