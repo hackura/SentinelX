@@ -110,7 +110,7 @@ python3 -m sentinelx.core.advanced_reporting
 
 ## 📄 Sample Reports
 View a sample assessment report:
-- [Sample PDF Report](./reports/SentinelX_Report_test.pdf)
+- [Sample PDF Report](reports/SentinelX_Report_test.pdf)
 
 ---
 
