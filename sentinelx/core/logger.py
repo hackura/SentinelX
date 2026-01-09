@@ -17,11 +17,20 @@ class JsonFormatter(logging.Formatter):
         }
         return json.dumps(log_record)
 
-def setup_logger(log_dir="logs"):
+def setup_logger():
+    # Use user home directory for logs to avoid permission errors
+    log_dir = os.path.expanduser("~/.sentinelx/logs")
+    
     if not os.path.exists(log_dir):
-        os.makedirs(log_dir)
+        try:
+            os.makedirs(log_dir)
+        except OSError:
+            # Fallback to tmp if home is not writable (rare)
+            import tempfile
+            log_dir = os.path.join(tempfile.gettempdir(), "sentinelx_logs")
+            os.makedirs(log_dir, exist_ok=True)
 
-    log_file = os.path.join(log_dir, f"sentinelx_{datetime.now().strftime("%Y%m%d")}.json")
+    log_file = os.path.join(log_dir, f"sentinelx_{datetime.now().strftime(%Y%m%d)}.json")
 
     # File Handler (JSON)
     file_handler = logging.FileHandler(log_file)
@@ -35,7 +44,8 @@ def setup_logger(log_dir="logs"):
     logging.basicConfig(
         level=logging.INFO,
         handlers=[file_handler, console_handler],
-        format="%(message)s"
+        format="%(message)s",
+        force=True # Ensure we override any existing config
     )
 
     return logging.getLogger("sentinelx")

@@ -32,7 +32,27 @@
 
 ---
 
+
+## 📱 Termux Support
+
+SentinelX is fully optimized for Android via Termux:
+
+- ✅ **JSON reports:** Always generated.
+- ✅ **HTML reports:** Always generated.
+- ❌ **PDF reports:** Automatically disabled (Android limitation).
+
+The tool will gracefully fallback to HTML + JSON output if PDF dependencies are missing or incompatible with the environment.
+
+
 ## 📦 Installation & Setup
+
+
+### 🐧 System Dependencies (Linux)
+To generate PDF reports (WeasyPrint/Cairo), you may need system-level libraries:
+```bash
+sudo apt update
+sudo apt install -y pkg-config libcairo2-dev libpython3-dev
+```
 
 ### 1. Install via Pip (PyPI)
 The recommended way to install SentinelX is via pip:

@@ -2,14 +2,24 @@
 import sys
 import os
 
-# Ensure the script can see the package if run locally
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Resolve the actual path of this script (chasing symlinks)
+script_path = os.path.abspath(os.path.realpath(__file__))
+current_dir = os.path.dirname(script_path)
+package_root = os.path.dirname(current_dir)
 
+# Add the package root to sys.path
+if package_root not in sys.path:
+    sys.path.insert(0, package_root)
+
+# Debug: Print paths if import fails
 try:
     from sentinelx.core.menu import main_menu
-except ImportError:
-    # Fallback for installed package
-    from .core.menu import main_menu
+except ImportError as e:
+    print(f"Error: Could not import sentinelx package: {e}")
+    print(f"Script Path: {script_path}")
+    print(f"Package Root Calculated: {package_root}")
+    print(f"Sys Path: {sys.path}")
+    sys.exit(1)
 
 def main():
     try:

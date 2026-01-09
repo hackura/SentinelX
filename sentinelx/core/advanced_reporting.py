@@ -1,18 +1,30 @@
 import os
 import json
 import logging
+import platform
 from datetime import datetime
 from jinja2 import Template
 from rich.console import Console
 from rich.prompt import Confirm
 
-# Import PDF generator if available
-try:
-    from weasyprint import HTML
-    HAS_WEASYPRINT = True
-except ImportError:
-    HAS_WEASYPRINT = False
+def is_termux():
+    return os.path.exists("/data/data/com.termux/files")
 
+PDF_AVAILABLE = False
+if not is_termux():
+    try:
+        from weasyprint import HTML
+        HAS_WEASYPRINT = True
+        PDF_AVAILABLE = True
+    except ImportError:
+        HAS_WEASYPRINT = False
+        PDF_AVAILABLE = False
+else:
+    HAS_WEASYPRINT = False
+    PDF_AVAILABLE = False
+
+console = Console()
+log = logging.getLogger("sentinelx")
 console = Console()
 log = logging.getLogger("sentinelx")
 
@@ -361,70 +373,65 @@ def calculate_stats(blue_modules):
     return stats
 
 def generate_report(data):
-    """
-    Generates a professional PDF audit report and a JSON data file.
-    """
-    
-    # 1. Authorization Check
-    console.print("[bold yellow]Initiating Professional Security Audit Report[/bold yellow]")
+
+    # 1. Authorization
+    console.print("[bold yellow]Initiating Professional Report Generation[/bold yellow]")
     if not Confirm.ask("Do you have explicit authorization to generate this report for the target system?"):
         console.print("[bold red]Aborted: Authorization declined.[/bold red]")
-        # Save JSON only as fallback? No, instructions say skip generation if denied.
         return
 
-    # 2. Prepare Data & Paths
-    os.makedirs(os.path.join(os.path.dirname(os.path.dirname(__file__)), "reports"), exist_ok=True)
+    # 2. Prepare Paths
+    reports_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "reports")
+    os.makedirs(reports_dir, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     report_id = f"SX-{timestamp}"
-    json_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "reports", f"SentinelX_Report_{timestamp}.json")
-    pdf_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "reports", f"SentinelX_Report_{timestamp}.pdf")
     
-    # Enrich Data for Template
-    all_modules = data.get("red_modules", []) + data.get("blue_modules", []) + data.get("purple_modules", [])
-    module_names = ", ".join([m["name"] for m in all_modules])
+    # Paths (Dynamic)
+    json_path = os.path.join(reports_dir, f"SentinelX_Report_{timestamp}.json")
+    html_path = os.path.join(reports_dir, f"SentinelX_Report_{timestamp}.html")
+    pdf_path = os.path.join(reports_dir, f"SentinelX_Report_{timestamp}.pdf")
     
-    # Add MITRE descriptions
-    for mod in all_modules:
-        mod["mitre_desc"] = get_mitre_description(mod.get("mitre", ""))
-
-    stats = calculate_stats(data.get("blue_modules", []))
-
-    # 3. Save JSON Report (Always generated if authorized)
+    # Logo Path
+    logo_abs_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "assets", "logo.png")
+    
+    # 3. Save JSON (Always)
     with open(json_path, "w") as f:
         json.dump(data, f, indent=4)
     console.print(f"[green]✔ JSON data saved to: {json_path}[/green]")
 
-    # 4. Generate PDF Report
-    if not HAS_WEASYPRINT:
-        console.print("[bold red]Warning: WeasyPrint not found. PDF generation skipped.[/bold red]")
-        console.print("Install with: [cyan]pip install weasyprint[/cyan]")
+    # 4. Render HTML
+    template = Template(HTML_TEMPLATE)
+    html_content = template.render(
+        css=REPORT_CSS,
+        logo_path=logo_abs_path,
+        date=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        target=data.get("target", "Unknown"),
+        report_id=report_id,
+        red_modules=data.get("red_modules", []),
+        blue_modules=data.get("blue_modules", []),
+        purple_modules=data.get("purple_modules", []),
+        all_modules=data.get("red_modules", []) + data.get("blue_modules", []) + data.get("purple_modules", []),
+        module_names=", ".join([m["name"] for m in data.get("red_modules", []) + data.get("blue_modules", [])]),
+        stats=calculate_stats(data.get("blue_modules", []))
+    )
+    
+    # Save HTML (Always as fallback/intermediate)
+    with open(html_path, "w") as f:
+        f.write(html_content)
+    console.print(f"[green]✔ HTML Report saved to: {html_path}[/green]")
+
+    # 5. Generate PDF (Conditional)
+    if not PDF_AVAILABLE:
+        console.print("[yellow][!] PDF generation not supported on this system (Termux/Missing Deps).[/yellow]")
+        console.print(f"[green][+] Report available as HTML: {html_path}[/green]")
         return
 
     try:
-        logo_abs_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "assets", "logo.png")
-        if not os.path.exists(logo_abs_path):
-            console.print("[yellow]Warning: logo.png not found in assets/. PDF will have broken image.[/yellow]")
-
-        template = Template(HTML_TEMPLATE)
-        html_content = template.render(
-            css=REPORT_CSS,
-            logo_path=logo_abs_path,
-            date=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            target=data.get("target", "Unknown"),
-            report_id=report_id,
-            red_modules=data.get("red_modules", []),
-            blue_modules=data.get("blue_modules", []),
-            purple_modules=data.get("purple_modules", []),
-            all_modules=all_modules,
-            module_names=module_names,
-            stats=stats
-        )
-
         HTML(string=html_content, base_url=".").write_pdf(pdf_path)
         console.print(f"[bold green]✔ PDF Report successfully generated at: {pdf_path}[/bold green]")
-        
     except Exception as e:
         console.print(f"[bold red]✘ PDF Generation failed: {e}[/bold red]")
+
 
 if __name__ == "__main__":
     # Dummy Data for Testing
