@@ -45,7 +45,7 @@ def print_dynamic_banner(role="main"):
     console.print(Text(sub_text, style=f"bold italic {color}"))
     quote = random.choice(QUOTES)
     console.print(Align.center(f"[italic dim]{quote}[/italic dim]"))
-    console.print(Panel.fit(f"SENTINELX v2.0 - {role.upper()} MODE", border_style=color))
+    console.print(Panel.fit(f"SENTINELX v2.2 - {role.upper()} MODE", border_style=color))
 
 @contextmanager
 def animated_spinner(message="Processing...", style="cyan"):

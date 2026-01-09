@@ -1,4 +1,4 @@
-SentinelX v2.0 - New Features Usage
+SentinelX v2.2 - New Features Usage
 
 1. Run the CLI:
    $ sentinelX

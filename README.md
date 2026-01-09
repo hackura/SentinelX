@@ -1,11 +1,13 @@
-# SentinelX v2.0 - Red/Blue/Purple Team Framework
+# SentinelX v2.3 - Red/Blue/Purple Team Framework
 
 ![PyPI - Version](https://img.shields.io/pypi/v/sentinelx)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/sentinelx)
-![License](https://img.shields.io/pypi/l/sentinelx)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ![Platform](https://img.shields.io/badge/platform-linux%20%7C%20termux-blue)
 
 **SentinelX** is a modular, production-ready CLI framework designed for **authorized** security testing, defensive validation, and Purple Team simulations. Built for **Kali Linux** and **Termux**, it provides a unified, immersive experience for security professionals.
+
+![SentinelX Logo](./sentinelx/assets/logo.png)
 
 ```text
    _____            _   _            _ __   __
@@ -23,43 +25,23 @@
 ## 🚀 Key Features
 
 *   **Immersive CLI:** Full-screen interface that clears the terminal on launch.
-*   **Team Modes:** Dedicated Red, Blue, and Purple Team workflows.
-*   **Live Dashboard:** Dynamic, full-screen analytics dashboard (Option 5).
-*   **Ethical Authorization:** Integrated first-run consent and per-report authorization.
-*   **Advanced Reporting:** Professional PDF generation with SVG logo support and table-based analytics.
-*   **Visual Identity:** Built-in SVG Logo generator.
-*   **MITRE ATT&CK Mapping:** All modules map to industry-standard techniques.
+*   **Team Modes:** Dedicated Red, Blue, and Purple Team workflows with role-based colors and banners.
+*   **Live Dashboard:** Dynamic, full-screen analytics dashboard (Option 5) showing tool status and system health.
+*   **Cumulative Session Reporting:** Run multiple operations and generate a single unified report at the end of your session.
+*   **Ethical Authorization:** Integrated first-run consent and per-session authorization prompts.
+*   **Intelligent PDF Engine:** High-fidelity reporting with WeasyPrint, with an automatic fallback to ReportLab for **Termux/Mobile** environments.
+*   **Visual Identity:** Built-in SVG Logo generator for professional branding.
+*   **MITRE ATT&CK Mapping:** All modules map directly to industry-standard techniques.
 
 ---
 
-
-## 📱 Termux Support
-
-SentinelX is fully optimized for Android via Termux:
-
-- ✅ **JSON reports:** Always generated.
-- ✅ **HTML reports:** Always generated.
-- ❌ **PDF reports:** Automatically disabled (Android limitation).
-
-The tool will gracefully fallback to HTML + JSON output if PDF dependencies are missing or incompatible with the environment.
-
-
 ## 📦 Installation & Setup
 
-
-### 🐧 System Dependencies (Linux)
-To generate PDF reports (WeasyPrint/Cairo), you may need system-level libraries:
-```bash
-sudo apt update
-sudo apt install -y pkg-config libcairo2-dev libpython3-dev
-```
-
 ### 1. Install via Pip (PyPI)
-The recommended way to install SentinelX is via pip:
-
 ```bash
 pip install sentinelx
 ```
+*Note: For full PDF support on Linux, use `pip install sentinelx[pdf]`.*
 
 ### 2. Run the Tool
 The tool is accessible globally via the `sentinelX` command:
@@ -68,63 +50,52 @@ sentinelX
 ```
 
 ### 3. Local Development / Manual Install
-If you downloaded the source code:
 ```bash
 git clone https://github.com/hackura/SentinelX.git
 cd SentinelX
 pip install .
 ```
 
-
 ### 4. Virtual Environment (Recommended)
-To keep your system clean, install SentinelX in a virtual environment:
 ```bash
-# Create venv
 python3 -m venv venv
-
-# Activate venv
 source venv/bin/activate
-
-# Install SentinelX
 pip install .
 ```
-After installation, the `sentinelX` command will be available whenever the environment is active.
 
 ---
 
 ## 🛠️ Module Ecosystem
 
 ### 🔴 Red Team (Offensive)
-*   **Recon:** Nmap, Amass.
-*   **Web:** Nikto, Nuclei, SQLMap.
-*   **Auth:** Hydra.
-*   **Payloads:** MSFVenom helper.
+*   **Recon:** Nmap (Service/OS discovery), Amass (Subdomain enumeration).
+*   **Web:** Nikto & Nuclei (Vulnerability scanning), SQLMap (Automated SQLi testing).
+*   **Auth:** Hydra (Brute-force testing).
+*   **Payloads:** MSFVenom helper for security payload generation.
 
 ### 🔵 Blue Team (Defensive)
-*   **Scanners:** YARA, Sigma.
-*   **Analytics:** Automated log parsing.
-*   **IOCs:** IOC scanning.
+*   **Scanners:** YARA (Malware patterns), Sigma (Threat detection rules).
+*   **Analytics:** Automated log parsing for `auth.log` and Web server `access.log`.
+*   **IOCs:** Automated Indicator of Compromise (IOC) scanning.
 
 ### 🟣 Purple Team (Simulation)
 *   **Correlation:** Attack → Detection simulations.
-*   **Verification:** Validates simulated attacks in logs.
-*   **PDF Reports:** Professional PDF generation.
+*   **Verification:** Automatically validates if simulated attacks are captured in system logs.
+*   **Cumulative Reports:** Merge multiple simulations into one professional PDF.
 
 ---
 
 ## 📊 Advanced Tools
 
 ### Live Full-Screen Dashboard
-Select **Option [5]** from the main menu for a real-time overview.
-
-
-```
+Access the dynamic dashboard by selecting **Option [5]** from the main menu.
 
 ### PDF Report Generation
-Generate a professional security report (Requires `weasyprint` and `jinja2`):
+Generate a professional security report:
 ```bash
 python3 -m sentinelx.core.advanced_reporting
 ```
+*Supports automated fallback to ReportLab/Markdown if WeasyPrint dependencies (pycairo) are missing.*
 
 ---
 
@@ -135,7 +106,7 @@ View a sample assessment report:
 ---
 
 ## 🗑️ Uninstallation
-To completely remove SentinelX:
+To completely remove SentinelX, including configuration and symlinks:
 ```bash
 ./sentinelx_uninstall.py
 ```
@@ -143,20 +114,16 @@ To completely remove SentinelX:
 ---
 
 ## 🤝 Contributing
-
 We welcome contributions! Please follow these guidelines:
-1.  **Fork & Clone** the repo.
-2.  **Create a Branch**.
-3.  **Ethical Use Only**.
-4.  **Modular Design**.
-5.  **Clean Code**.
-6.  **Submit PR**.
+1. Fork the repo.
+2. Create a feature branch.
+3. Ensure ethical usage.
+4. Submit a Pull Request.
 
 ---
 
 ## ❤️ Support the Project
-
-If SentinelX has helped you in your security operations or learning journey, consider supporting the development!
+If SentinelX has helped you, consider supporting the development!
 
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/hackura)
 
@@ -164,4 +131,4 @@ If SentinelX has helped you in your security operations or learning journey, con
 
 ## ⚠️ Ethical Disclaimer
 **SentinelX is for authorized security testing and defensive validation only.**
-The developers are not responsible for misuse. Explicit permission is required to test any target system.
+Explicit permission is required to test any target system. Consent is recorded locally at `~/.sentinelx/.consent`.

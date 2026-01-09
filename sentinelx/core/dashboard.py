@@ -69,7 +69,7 @@ def make_layout(config):
     purple_content = Table(show_header=False, expand=True, box=None)
     purple_content.add_row("Platform", "Linux/Termux")
     purple_content.add_row("User", os.getenv("USER", "root"))
-    purple_content.add_row("Version", "2.1.0")
+    purple_content.add_row("Version", "2.2.0")
     purple_content.add_row("Mode", "Interactive")
     purple_content.add_row("Dashboard", "Live")
     

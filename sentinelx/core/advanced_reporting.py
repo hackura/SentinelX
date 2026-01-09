@@ -199,7 +199,7 @@ HTML_TEMPLATE = """
     <div class="cover-page">
         <img src="file://{{ logo_path }}" class="logo" alt="SentinelX Logo">
         <div class="cover-title">Security Audit Report</div>
-        <div class="cover-subtitle">SentinelX Framework v2.0</div>
+        <div class="cover-subtitle">SentinelX Framework v2.2</div>
         
         <table class="meta-table">
             <tr><td class="meta-key">Target System:</td><td>{{ target }}</td></tr>
@@ -372,6 +372,23 @@ def calculate_stats(blue_modules):
                 stats[sev] += 1
     return stats
 
+
+try:
+    from sentinelx.core.pdf_gen import check_auth_and_generate_pdf as reportlab_generator
+    HAS_REPORTLAB = True
+except ImportError:
+    HAS_REPORTLAB = False
+
+def generate_markdown_fallback(data, timestamp):
+    md_path = f"reports/SentinelX_Report_{timestamp}.md"
+    os.makedirs("reports", exist_ok=True)
+    with open(md_path, "w") as f:
+        f.write(f"# SentinelX Report - {data.get("target")}\n\n")
+        f.write(f"Generated: {datetime.now()}\n\n")
+        f.write("## Results\n")
+        f.write(json.dumps(data, indent=4))
+    console.print(f"[yellow]Fallback: Markdown report generated at {md_path}[/yellow]")
+
 def generate_report(data):
 
     # 1. Authorization
@@ -420,18 +437,23 @@ def generate_report(data):
         f.write(html_content)
     console.print(f"[green]✔ HTML Report saved to: {html_path}[/green]")
 
-    # 5. Generate PDF (Conditional)
-    if not PDF_AVAILABLE:
-        console.print("[yellow][!] PDF generation not supported on this system (Termux/Missing Deps).[/yellow]")
-        console.print(f"[green][+] Report available as HTML: {html_path}[/green]")
-        return
-
+    
+    # 5. Generate PDF with Fallbacks
     try:
-        HTML(string=html_content, base_url=".").write_pdf(pdf_path)
-        console.print(f"[bold green]✔ PDF Report successfully generated at: {pdf_path}[/bold green]")
+        if HAS_WEASYPRINT:
+            HTML(string=html_content, base_url=".").write_pdf(pdf_path)
+            console.print(f"[bold green]✔ PDF Report (WeasyPrint) generated at: {pdf_path}[/bold green]")
+        elif HAS_REPORTLAB:
+            console.print("[yellow]WeasyPrint unavailable. Falling back to ReportLab engine...[/yellow]")
+            # Flatten data for reportlab
+            flat_data = {"Target": data.get("target")}
+            for m in data.get("red_modules", []): flat_data[f"Red: {m[name]}"] = m["status"]
+            reportlab_generator(flat_data, pdf_path)
+        else:
+            generate_markdown_fallback(data, timestamp)
     except Exception as e:
-        console.print(f"[bold red]✘ PDF Generation failed: {e}[/bold red]")
-
+        console.print(f"[bold red]✘ Reporting failed: {e}[/bold red]")
+        generate_markdown_fallback(data, timestamp)
 
 if __name__ == "__main__":
     # Dummy Data for Testing

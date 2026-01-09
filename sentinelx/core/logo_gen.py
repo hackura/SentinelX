@@ -30,7 +30,7 @@ def generate_svg_logo(output_path=os.path.join(os.path.dirname(os.path.dirname(_
         
   <!-- Version Tag -->
   <text x="85%" y="85%" font-family="Arial, sans-serif" font-size="14" 
-        fill="#aaaaaa" text-anchor="end">v2.0</text>
+        fill="#aaaaaa" text-anchor="end">v2.2</text>
 </svg>"""
 
     with open(output_path, "w") as f:
